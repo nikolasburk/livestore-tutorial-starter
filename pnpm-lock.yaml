@@ -23,6 +23,9 @@ importers:
       '@livestore/react':
         specifier: 0.4.0-dev.14
         version: 0.4.0-dev.14(e4736eacdbd282f99403f166cb300bcf)
+      '@livestore/sync-cf':
+        specifier: 0.4.0-dev.14
+        version: 0.4.0-dev.14(d3fd93fee8833f157dc5055a2ce75b7e)
       '@livestore/wa-sqlite':
         specifier: 0.4.0-dev.14
         version: 0.4.0-dev.14
@@ -882,6 +885,9 @@ packages:
 
   '@livestore/sqlite-wasm@0.4.0-dev.14':
     resolution: {integrity: sha512-+4tKUHrVXpwcDqRpAUtqghSOjT5FqycP5P8DJt2KxRt8VrqYbfTW7g6tQnQQ+SEZRsgMcKzHH/b7JGF7fvR9JA==}
+
+  '@livestore/sync-cf@0.4.0-dev.14':
+    resolution: {integrity: sha512-qzYJs9o2tj2pKh2DAXngBLEEQJrfg4tC2hw3HYDyOHqUYhy+0o3QcFW5FHSPz3ezFqay13pCtAS+BzwRZipWnQ==}
 
   '@livestore/utils@0.4.0-dev.14':
     resolution: {integrity: sha512-ytKY9xZahq30DmucO5xVDfEzei+C27GcP+m8U9XjtblB0GQXUjn0AtaCYUaaVNlUy+eDVriSZl+C06ZOwCrV+A==}
@@ -3034,6 +3040,31 @@ snapshots:
       '@livestore/common-cf': 0.4.0-dev.14(d3fd93fee8833f157dc5055a2ce75b7e)
       '@livestore/utils': 0.4.0-dev.14(d3fd93fee8833f157dc5055a2ce75b7e)
       '@livestore/wa-sqlite': 0.4.0-dev.14
+    transitivePeerDependencies:
+      - '@effect/ai'
+      - '@effect/cli'
+      - '@effect/cluster'
+      - '@effect/experimental'
+      - '@effect/opentelemetry'
+      - '@effect/platform'
+      - '@effect/platform-browser'
+      - '@effect/platform-bun'
+      - '@effect/platform-node'
+      - '@effect/printer'
+      - '@effect/printer-ansi'
+      - '@effect/rpc'
+      - '@effect/sql'
+      - '@effect/typeclass'
+      - '@opentelemetry/api'
+      - '@opentelemetry/resources'
+      - effect
+
+  '@livestore/sync-cf@0.4.0-dev.14(d3fd93fee8833f157dc5055a2ce75b7e)':
+    dependencies:
+      '@cloudflare/workers-types': 4.20250923.0
+      '@livestore/common': 0.4.0-dev.14(1237cb9bf0fe5bebcf51fe77a9805342)
+      '@livestore/common-cf': 0.4.0-dev.14(d3fd93fee8833f157dc5055a2ce75b7e)
+      '@livestore/utils': 0.4.0-dev.14(d3fd93fee8833f157dc5055a2ce75b7e)
     transitivePeerDependencies:
       - '@effect/ai'
       - '@effect/cli'
