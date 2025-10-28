@@ -1,0 +1,5 @@
+name = "livestore-todo-app"
+compatibility_date = "2024-10-28"
+
+[observability]
+enabled = true
