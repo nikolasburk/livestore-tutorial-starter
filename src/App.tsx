@@ -8,7 +8,6 @@ function App() {
 
   const { store } = useStore()
 
-
   const todos$ = queryDb(() => tables.todos.select())
 
   const todos = store.useQuery(todos$)
@@ -27,6 +26,12 @@ function App() {
   const deleteTodo = (id: number) => {
     store.commit(
       events.todoDeleted({ id }),
+    )
+  }
+
+  const toggleTodo = (id: number, completed: boolean) => {
+    store.commit(
+      completed ? events.todoUncompleted({ id }) : events.todoCompleted({ id })
     )
   }
 
@@ -66,7 +71,17 @@ function App() {
               key={todo.id}
               className="flex items-center justify-between bg-white px-4 py-3 rounded shadow-sm"
             >
-              <span className="text-gray-700">{todo.text}</span>
+              <div className="flex items-center gap-3 flex-1">
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => toggleTodo(todo.id, todo.completed)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <span className={`text-gray-700 ${todo.completed ? 'line-through text-gray-400' : ''}`}>
+                  {todo.text}
+                </span>
+              </div>
               <button
                 onClick={() => deleteTodo(todo.id)}
                 className="px-4 py-1 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
