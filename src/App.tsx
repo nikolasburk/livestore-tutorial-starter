@@ -1,25 +1,37 @@
-import { useState } from 'react'
 import { useStore } from '@livestore/react'
-import { tables, events } from './livestore/schema'
+import { tables, events, Filter } from './livestore/schema'
 import { queryDb } from '@livestore/livestore'
 
 
 function App() {
 
   const { store } = useStore()
+  const uiState$ = queryDb(() => tables.uiState.get())
+  const { input, filter } = store.useQuery(uiState$)
+  
+  const updatedInput = (input: string) => store.commit(events.uiStateSet({ input }))
+  const updatedFilter = (filter: Filter) => store.commit(events.uiStateSet({ filter }))
 
-  const todos$ = queryDb(() => tables.todos.select())
-
+  const todos$ = queryDb((
+    (get) => {
+      const { filter } = get(uiState$)
+      return tables.todos.where({
+        completed: filter === 'Completed' ? true
+          : filter === 'Active' ? false
+            : undefined
+      })
+    }
+  ), { label: 'todos' })
   const todos = store.useQuery(todos$)
 
-  const [input, setInput] = useState('')
+
 
   const addTodo = () => {
     if (input.trim()) {
       store.commit(
         events.todoCreated({ id: Date.now(), text: input }),
       )
-      setInput('')
+      updatedInput('')
     }
   }
 
@@ -42,7 +54,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-6">
       <div className="w-full max-w-lg">
         <h1 className="text-5xl font-bold text-gray-800 text-center mb-12">
           Todo List
@@ -52,7 +64,7 @@ function App() {
           <input
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => updatedInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Enter a todo..."
             className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -65,7 +77,22 @@ function App() {
           </button>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex gap-1 mb-4 border-b border-gray-200 justify-center">
+          {(['All', 'Active', 'Completed'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => updatedFilter(tab)}
+              className={`px-5 py-2.5 text-sm bg-transparent border-0 -mb-px cursor-pointer outline-none transition-colors ${filter === tab
+                  ? 'text-blue-500 font-semibold'
+                  : 'text-gray-600 hover:text-gray-800'
+                }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-3 min-h-[200px]">
           {todos.map(todo => (
             <div
               key={todo.id}

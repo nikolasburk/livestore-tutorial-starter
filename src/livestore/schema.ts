@@ -1,4 +1,7 @@
-import { Events, makeSchema, Schema, State } from '@livestore/livestore'
+import { Events, makeSchema, Schema, State, SessionIdSymbol } from '@livestore/livestore'
+
+export const Filter = Schema.Literal('All', 'Active', 'Completed')
+export type Filter = typeof Filter.Type
 
 export const tables = {
   todos: State.SQLite.table({
@@ -8,7 +11,12 @@ export const tables = {
       text: State.SQLite.text({ default: '' }),
       completed: State.SQLite.boolean({ default: false }),
     },
-  })
+  }),
+  uiState: State.SQLite.clientDocument({
+    name: 'uiState',
+    schema: Schema.Struct({ input: Schema.String, filter: Filter }),
+    default: { id: SessionIdSymbol, value: { input: '', filter: 'All' } },
+  }),
 }
 
 export const events = {
@@ -28,6 +36,8 @@ export const events = {
     name: 'v1.TodoUncompleted',
     schema: Schema.Struct({ id: Schema.Number }),
   }),
+  uiStateSet: tables.uiState.set,
+
 }
 
 const materializers = State.SQLite.materializers(events, {
