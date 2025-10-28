@@ -1,27 +1,33 @@
 import { useState } from 'react'
+import { useStore } from '@livestore/react'
+import { tables, events } from './livestore/schema'
+import { queryDb } from '@livestore/livestore'
 
-interface Todo {
-  id: number
-  text: string
-}
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+
+  const { store } = useStore()
+
+
+  const todos$ = queryDb(() => tables.todos.select())
+
+  const todos = store.useQuery(todos$)
+
   const [input, setInput] = useState('')
 
   const addTodo = () => {
     if (input.trim()) {
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: input
-      }
-      setTodos([...todos, newTodo])
+      store.commit(
+        events.todoCreated({ id: Date.now(), text: input }),
+      )
       setInput('')
     }
   }
 
   const deleteTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id))
+    store.commit(
+      events.todoDeleted({ id }),
+    )
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -36,7 +42,7 @@ function App() {
         <h1 className="text-5xl font-bold text-gray-800 text-center mb-12">
           Todo List
         </h1>
-        
+
         <div className="flex gap-3 mb-8">
           <input
             type="text"
@@ -46,7 +52,7 @@ function App() {
             placeholder="Enter a todo..."
             className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <button 
+          <button
             onClick={addTodo}
             className="px-6 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
           >
@@ -56,8 +62,8 @@ function App() {
 
         <div className="space-y-3">
           {todos.map(todo => (
-            <div 
-              key={todo.id} 
+            <div
+              key={todo.id}
               className="flex items-center justify-between bg-white px-4 py-3 rounded shadow-sm"
             >
               <span className="text-gray-700">{todo.text}</span>
@@ -70,7 +76,7 @@ function App() {
             </div>
           ))}
         </div>
-        
+
         {todos.length === 0 && (
           <p className="text-center text-gray-400 mt-8">
             No todos yet. Add one above!
