@@ -54,7 +54,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-lg">
         <h1 className="text-5xl font-bold text-gray-800 text-center mb-12">
           Todo List
