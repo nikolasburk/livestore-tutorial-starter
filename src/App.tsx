@@ -6,13 +6,14 @@ import { queryDb } from '@livestore/livestore'
 function App() {
 
   const { store } = useStore()
-  const uiState$ = queryDb(() => tables.uiState.get())
-  const { input, filter } = store.useQuery(uiState$)
-  
-  const updatedInput = (input: string) => store.commit(events.uiStateSet({ input }))
-  const updatedFilter = (filter: Filter) => store.commit(events.uiStateSet({ filter }))
 
-  const todos$ = queryDb((
+  const [
+    { input, filter }, 
+    setUiState, , 
+    uiState$
+  ] = store.useClientDocument(tables.uiState)
+
+  const todos$ = queryDb(
     (get) => {
       const { filter } = get(uiState$)
       return tables.todos.where({
@@ -20,11 +21,13 @@ function App() {
           : filter === 'Active' ? false
             : undefined
       })
-    }
-  ), { label: 'todos' })
+    },
+    { label: 'todos' },
+  )
   const todos = store.useQuery(todos$)
 
-
+  const updatedInput = (input: string) => setUiState((state) => ({ ...state, input }))
+  const updatedFilter = (filter: Filter) => setUiState((state) => ({ ...state, filter }))
 
   const addTodo = () => {
     if (input.trim()) {
@@ -47,14 +50,14 @@ function App() {
     )
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       addTodo()
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-6">
       <div className="w-full max-w-lg">
         <h1 className="text-5xl font-bold text-gray-800 text-center mb-12">
           Todo List
